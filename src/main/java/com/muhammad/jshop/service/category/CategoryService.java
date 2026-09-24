@@ -13,6 +13,12 @@ public class CategoryService implements ICategoryInterface {
 
     @Override
     public Category addCategory(CategoryRequest categoryRequest) {
+        //find image by id
+
+            // if  not exist throw a no data found error
+        // check if exist any category with this name
+            // if exist return message as already have
+        // if all good save and return a category response
         return null;
     }
 }
