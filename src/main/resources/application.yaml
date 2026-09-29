@@ -20,3 +20,7 @@ server:
 
 api:
   prefix: /api/v1
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

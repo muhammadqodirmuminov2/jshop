@@ -7,10 +7,7 @@ import com.muhammad.jshop.response.ApiResponse;
 import com.muhammad.jshop.service.category.ICategoryInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,5 +24,10 @@ public class CategoryController {
         } catch (AlreadyExistException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<ApiResponse> allCategories() {
+        return ResponseEntity.ok(new ApiResponse("Success","Hello"));
     }
 }
