@@ -20,5 +20,5 @@ public class CategoryRequest {
 
     @Min(value = 0, message = "Image id must be greater than 0!")
     @NotBlank(message = "Image id is required!")
-    private int imageId;
+    private Long imageId;
 }

@@ -16,7 +16,7 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
 
     @Column(unique = true)
     private String name;
@@ -24,7 +24,8 @@ public class Category {
     @Column(unique = false)
     private String description;
 
-    @OneToOne(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
     private Image image;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
