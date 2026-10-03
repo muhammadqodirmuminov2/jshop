@@ -4,7 +4,6 @@ import com.muhammad.jshop.dto.ImageDto;
 import com.muhammad.jshop.model.Image;
 import com.muhammad.jshop.repository.ImageRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +13,7 @@ import java.sql.SQLException;
 
 @AllArgsConstructor
 @Service
-public class imageService implements IImageService {
+public class ImageService implements IImageService {
     private final ImageRepository imageRepository;
 
     @Override
