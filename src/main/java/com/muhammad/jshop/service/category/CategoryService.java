@@ -1,23 +1,21 @@
 package com.muhammad.jshop.service.category;
 
 import com.muhammad.jshop.dto.CategoryDto;
-import com.muhammad.jshop.dto.ImageDto;
 import com.muhammad.jshop.exception.AlreadyExistException;
+import com.muhammad.jshop.exception.ResourceNotFoundException;
 import com.muhammad.jshop.mapper.CategoryMapper;
 import com.muhammad.jshop.model.Category;
 import com.muhammad.jshop.model.Image;
 import com.muhammad.jshop.repository.CategoryRepository;
 import com.muhammad.jshop.request.CategoryRequest;
-import com.muhammad.jshop.response.ApiResponse;
 import com.muhammad.jshop.service.image.IImageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,14 +45,26 @@ public class CategoryService implements ICategoryInterface {
         }
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public List<CategoryDto> getAllCategories() {
+    @Override
+    public Page<CategoryDto> getAllCategories(String search, Pageable pageable) {
         try {
-            return categoryRepository.findAll().stream()
-                    .map(categoryMapper::toDto).toList();
+            Page<Category> page = (search == null || search.isBlank())
+                    ? categoryRepository.findAll(pageable)
+                    : categoryRepository.findByNameContainingIgnoreCase(search.trim(), pageable);
+            return page
+                    .map(categoryMapper::toDto);
         }catch (RuntimeException e) {
             throw new RuntimeException("Failed to get all categories " + e.getMessage());
         }
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CategoryDto findCategoryById(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
+        return categoryMapper.toDto(category);
+    }
+
 }

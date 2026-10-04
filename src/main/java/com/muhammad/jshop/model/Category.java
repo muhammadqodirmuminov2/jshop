@@ -24,7 +24,7 @@ public class Category {
     @Column(unique = false)
     private String description;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image image;
 

@@ -2,11 +2,17 @@ package com.muhammad.jshop.controller;
 
 import com.muhammad.jshop.dto.CategoryDto;
 import com.muhammad.jshop.exception.AlreadyExistException;
+import com.muhammad.jshop.exception.ResourceNotFoundException;
 import com.muhammad.jshop.model.Category;
 import com.muhammad.jshop.request.CategoryRequest;
 import com.muhammad.jshop.response.ApiResponse;
+import com.muhammad.jshop.response.PageResponse;
 import com.muhammad.jshop.service.category.ICategoryInterface;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +37,25 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> allCategories() {
+    public ResponseEntity<ApiResponse> allCategories(
+            @RequestParam (required = false) String search,
+            @ParameterObject @PageableDefault(size = 10, sort = "name") Pageable pageable
+    ) {
         try {
-            List<CategoryDto> categories = categoryService.getAllCategories();
-            return  ResponseEntity.ok(new ApiResponse("Success", categories));
+            Page<CategoryDto> page = categoryService.getAllCategories(search, pageable);
+            return ResponseEntity.ok(new ApiResponse("Success", PageResponse.of(page)));
         } catch (Exception e) {
             return   ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
+        }
+    }
+
+    @GetMapping("/find-one/{categoryId}")
+    public ResponseEntity<ApiResponse> findCategoryById(@PathVariable("categoryId") Long categoryId) {
+        try {
+            CategoryDto categoryDto = categoryService.findCategoryById(categoryId);
+            return ResponseEntity.ok(new ApiResponse("Success", categoryDto));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
     }
 }
