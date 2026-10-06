@@ -33,7 +33,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_images",
             joinColumns = @JoinColumn(name = "product_id"),
