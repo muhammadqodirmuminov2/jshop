@@ -3,7 +3,6 @@ package com.muhammad.jshop.controller;
 import com.muhammad.jshop.dto.CategoryDto;
 import com.muhammad.jshop.exception.AlreadyExistException;
 import com.muhammad.jshop.exception.ResourceNotFoundException;
-import com.muhammad.jshop.model.Category;
 import com.muhammad.jshop.request.CategoryRequest;
 import com.muhammad.jshop.response.ApiResponse;
 import com.muhammad.jshop.response.PageResponse;
@@ -56,6 +55,31 @@ public class CategoryController {
             return ResponseEntity.ok(new ApiResponse("Success", categoryDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+        }
+    }
+
+    @PatchMapping("/update/{categoryId}")
+    public ResponseEntity<ApiResponse> updateCategory(
+            @PathVariable Long categoryId,
+            @RequestBody CategoryRequest categoryRequest
+    ) {
+        try {
+            CategoryDto categoryDto = categoryService.updateCategory(categoryId,categoryRequest);
+            return  ResponseEntity.ok(new ApiResponse("Success", categoryDto));
+        } catch (ResourceNotFoundException e) {
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+        }
+    }
+
+    @DeleteMapping("/delete/{categoryId}")
+    public  ResponseEntity<ApiResponse> deleteCategory(
+            @PathVariable Long categoryId
+    ) {
+        try {
+            categoryService.deleteCategory(categoryId);
+            return  ResponseEntity.ok(new ApiResponse("Success", null));
+        } catch (ResourceNotFoundException e) {
+            return   ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
     }
 }

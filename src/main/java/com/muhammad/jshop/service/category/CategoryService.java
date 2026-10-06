@@ -67,4 +67,36 @@ public class CategoryService implements ICategoryInterface {
         return categoryMapper.toDto(category);
     }
 
+    @Override
+    @Transactional
+    public CategoryDto updateCategory(Long categoryId, CategoryRequest categoryRequest) {
+       Category oldCategory = categoryRepository.findById(categoryId)
+               .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
+
+       if (categoryRequest.getName() != null && !categoryRequest.getName().isBlank()) {
+           if (categoryRepository.existsByNameAndIdNot(categoryRequest.getName(), categoryId)) {
+               throw new AlreadyExistException("Category already exists: " + categoryRequest.getName());
+           }
+           oldCategory.setName(categoryRequest.getName());
+       }
+
+       if (categoryRequest.getDescription() != null && !categoryRequest.getDescription().isBlank()) {
+           oldCategory.setDescription(categoryRequest.getDescription());
+       }
+
+       if (categoryRequest.getImageId() != null) {
+           oldCategory.setImage(imageService.getImageById(categoryRequest.getImageId()));
+       }
+
+       return  categoryMapper.toDto(categoryRepository.save(oldCategory));
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategory(Long categoryId) {
+        categoryRepository.findById(categoryId)
+                .ifPresentOrElse(categoryRepository::delete, () -> {
+                    throw new ResourceNotFoundException("Category not found!");
+                });
+    }
 }

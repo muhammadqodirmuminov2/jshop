@@ -13,4 +13,6 @@ public interface ICategoryInterface {
     CategoryDto addCategory(CategoryRequest categoryRequest);
     Page<CategoryDto> getAllCategories(String search, Pageable pageable);
     CategoryDto findCategoryById(Long categoryId);
+    CategoryDto updateCategory(Long categoryId, CategoryRequest categoryRequest);
+    void deleteCategory(Long categoryId);
 }
