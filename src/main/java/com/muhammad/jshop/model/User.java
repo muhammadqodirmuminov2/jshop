@@ -24,7 +24,7 @@ public class User {
 
     private String lastName;
 
-    @NaturalId
+    @Column(unique = true, nullable = false)
     private String email;
 
     private  String password;
