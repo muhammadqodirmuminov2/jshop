@@ -3,9 +3,12 @@ package com.muhammad.jshop.controller;
 import com.muhammad.jshop.dto.CartDto;
 import com.muhammad.jshop.exception.ResourceNotFoundException;
 import com.muhammad.jshop.request.CartRequest;
+import com.muhammad.jshop.request.ChangeQuantityRequest;
 import com.muhammad.jshop.response.ApiResponse;
 import com.muhammad.jshop.service.cart.ICartService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +24,7 @@ public class CartController {
             CartDto cartDto = cartService.getMyCart(userId);
             return ResponseEntity.ok(new ApiResponse("Success", cartDto));
         } catch (Exception e) {
-            return  ResponseEntity.ok(new ApiResponse("Error", e.getMessage()));
+            return  ResponseEntity.ok(new ApiResponse(e.getMessage(), null));
         }
     }
 
@@ -31,7 +34,30 @@ public class CartController {
             CartDto cartDto = cartService.addToCart(cartRequest);
             return  ResponseEntity.ok(new ApiResponse("Success", cartDto));
         } catch (ResourceNotFoundException e) {
-            return   ResponseEntity.ok(new ApiResponse("Error", e.getMessage()));
+            return   ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+        }
+    }
+
+    @PatchMapping("/update-quantity/{itemId}")
+    public  ResponseEntity<ApiResponse> updateQuantity(
+            @PathVariable Long itemId,
+            @Valid @RequestBody ChangeQuantityRequest changeQuantityRequest
+    ) {
+        try {
+            CartDto cartDto = cartService.changeQuantity(itemId, changeQuantityRequest);
+            return  ResponseEntity.ok(new ApiResponse("Success", cartDto));
+        } catch (Exception e) {
+            return   ResponseEntity.ok(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @PostMapping("/clear/{userId}")
+    public  ResponseEntity<ApiResponse> clearCart(@PathVariable Long userId) {
+        try {
+            cartService.clearCart(userId);
+            return   ResponseEntity.ok(new ApiResponse("Success", null));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.ok(new ApiResponse(e.getMessage(),null ));
         }
     }
 }
