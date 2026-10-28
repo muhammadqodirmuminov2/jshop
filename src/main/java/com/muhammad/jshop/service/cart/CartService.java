@@ -105,10 +105,12 @@ public class CartService implements  ICartService {
         return cartRepository.findCartByUserId(userId).orElseGet(() -> {
             User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user not found"));
             Cart newCart = new Cart();
+            newCart.setCartItems(null);
+            newCart.setTotalAmount(BigDecimal.ZERO);
             newCart.setUser(user);
             newCart.setCartItems(new HashSet<>());
             cartRepository.save(newCart);
-            return  newCart;
+            return  cartRepository.save(newCart);
         });
     }
 
